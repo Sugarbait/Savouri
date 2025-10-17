@@ -126,6 +126,23 @@ export const Chatbot: React.FC = () => {
     let directFilteredItems: typeof menuItems | null = null;
     let directContent = '';
 
+    // CRITICAL: Check for allergy-related queries FIRST
+    if (/\b(allerg(y|ies|ic)|peanut|nut|shellfish|dairy|egg|soy|wheat|gluten|sesame|fish)\b/i.test(queryLower)) {
+      setIsTyping(false);
+      const allergyWarning: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: `⚠️ IMPORTANT ALLERGY NOTICE\n\nI understand you have allergy concerns. For your safety, I **strongly recommend** speaking directly with our restaurant staff about:\n\n• Specific allergen information\n• Cross-contamination risks\n• Ingredient details\n• Kitchen preparation methods\n\nWhile I can show you our menu items, **I cannot guarantee** any dish is completely safe for severe allergies. Please inform your server about your allergies when ordering so we can take proper precautions.\n\nWould you like to see our menu while you discuss safe options with our team?`,
+        timestamp: new Date(),
+        suggested_actions: [
+          { label: 'View Full Menu', action: 'show_menu', data: null },
+          { label: 'Show Popular Dishes', action: 'show_featured', data: null },
+        ],
+      };
+      setMessages(prev => [...prev, allergyWarning]);
+      return;
+    }
+
     // Check for menu item queries and filter directly
     if (/\b(vegan|vegetarian)\b/i.test(queryLower)) {
       directFilteredItems = menuItems.filter(item =>
