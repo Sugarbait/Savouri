@@ -1,30 +1,17 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useRestaurant } from '../contexts/RestaurantContext';
 import { MenuItem } from './MenuItem';
-import { Leaf, Flame, WheatOff, Milk, ChevronDown } from 'lucide-react';
+import { Leaf, WheatOff } from 'lucide-react';
 
 export const MenuSection: React.FC = () => {
   const { menuCategories, getMenuItemsByCategory, menuItems, currentRestaurant } = useRestaurant();
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>('all');
   const [dietaryFilter, setDietaryFilter] = useState<string>('all');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   if (!currentRestaurant) return null;
 
-  const activeCategory = selectedCategory || (menuCategories.length > 0 ? menuCategories[0].id : null);
-  const items = activeCategory ? getMenuItemsByCategory(activeCategory) : [];
+  const activeCategory = selectedCategory || 'all';
+  const items = activeCategory === 'all' ? menuItems : (activeCategory ? getMenuItemsByCategory(activeCategory) : []);
 
   const availableDietaryTags = useMemo(() => {
     const tags = new Set<string>();
@@ -49,20 +36,6 @@ export const MenuSection: React.FC = () => {
     availableDietaryTags.includes(option.value)
   );
 
-  const getSelectedLabel = () => {
-    if (dietaryFilter === 'all') return 'All Items';
-    const option = dietaryOptions.find(o => o.value === dietaryFilter);
-    return option ? option.label : 'All Items';
-  };
-
-  const getSelectedIcon = () => {
-    if (dietaryFilter === 'all') return null;
-    const option = dietaryOptions.find(o => o.value === dietaryFilter);
-    return option ? option.icon : null;
-  };
-
-  const SelectedIcon = getSelectedIcon();
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pb-24">
       <div className="text-center mb-12">
@@ -74,101 +47,112 @@ export const MenuSection: React.FC = () => {
         </p>
       </div>
 
-      {availableOptions.length > 0 && (
-        <div className="mb-8 flex justify-center">
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-3 px-6 py-3 bg-white border-2 border-gray-200 rounded-xl font-medium text-gray-700 hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md min-w-[200px] justify-between"
-            >
-              <div className="flex items-center gap-2">
-                {SelectedIcon && <SelectedIcon className="w-5 h-5" />}
-                <span>{getSelectedLabel()}</span>
-              </div>
-              <ChevronDown
-                className={`w-5 h-5 transition-transform duration-300 ${
-                  isDropdownOpen ? 'rotate-180' : ''
+      <div className="mb-8 space-y-6">
+        {/* Dietary Filters */}
+        {availableOptions.length > 0 && (
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Dietary Preferences</p>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <button
+                onClick={() => setDietaryFilter('all')}
+                className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+                  dietaryFilter === 'all'
+                    ? 'shadow-lg scale-105'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
-              />
-            </button>
+                style={
+                  dietaryFilter === 'all'
+                    ? {
+                        backgroundColor: currentRestaurant.primary_color,
+                        color: currentRestaurant.secondary_color,
+                      }
+                    : {}
+                }
+              >
+                All Items
+              </button>
+              {availableOptions.map(option => {
+                const Icon = option.icon;
+                return (
+                  <button
+                    key={option.value}
+                    onClick={() => setDietaryFilter(option.value)}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+                      dietaryFilter === option.value
+                        ? 'shadow-lg scale-105'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                    style={
+                      dietaryFilter === option.value
+                        ? {
+                            backgroundColor: currentRestaurant.primary_color,
+                            color: currentRestaurant.secondary_color,
+                          }
+                        : {}
+                    }
+                  >
+                    <Icon className="w-5 h-5" />
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
-            {isDropdownOpen && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl overflow-hidden z-10">
+        {/* Category Filters */}
+        <div className="flex flex-col items-center gap-3">
+          <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Categories</p>
+          <div className="overflow-x-auto scrollbar-hide w-full">
+            <div className="flex gap-3 min-w-max justify-center px-4">
+              <button
+                onClick={() => setSelectedCategory('all')}
+                className={`flex items-center gap-3 px-6 py-3 rounded-full font-semibold transition-all duration-300 whitespace-nowrap ${
+                  activeCategory === 'all'
+                    ? 'shadow-lg scale-105'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+                style={
+                  activeCategory === 'all'
+                    ? {
+                        backgroundColor: currentRestaurant.primary_color,
+                        color: currentRestaurant.secondary_color,
+                      }
+                    : {}
+                }
+              >
+                All Items
+              </button>
+              {menuCategories.map(category => (
                 <button
-                  onClick={() => {
-                    setDietaryFilter('all');
-                    setIsDropdownOpen(false);
-                  }}
-                  className={`w-full px-6 py-3 text-left hover:bg-gray-50 transition-colors duration-200 flex items-center gap-2 ${
-                    dietaryFilter === 'all' ? 'font-semibold' : ''
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`flex items-center gap-3 px-6 py-3 rounded-full font-semibold transition-all duration-300 whitespace-nowrap ${
+                    activeCategory === category.id
+                      ? 'shadow-lg scale-105'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                   style={
-                    dietaryFilter === 'all'
-                      ? { backgroundColor: currentRestaurant.secondary_color }
+                    activeCategory === category.id
+                      ? {
+                          backgroundColor: currentRestaurant.primary_color,
+                          color: currentRestaurant.secondary_color,
+                        }
                       : {}
                   }
                 >
-                  <span>All Items</span>
+                  {category.image_url && (
+                    <img
+                      src={category.image_url}
+                      alt={category.name}
+                      className="w-6 h-6 rounded-full object-cover"
+                    />
+                  )}
+                  {category.name}
                 </button>
-                {availableOptions.map(option => {
-                  const Icon = option.icon;
-                  return (
-                    <button
-                      key={option.value}
-                      onClick={() => {
-                        setDietaryFilter(option.value);
-                        setIsDropdownOpen(false);
-                      }}
-                      className={`w-full px-6 py-3 text-left hover:bg-gray-50 transition-colors duration-200 flex items-center gap-2 ${
-                        dietaryFilter === option.value ? 'font-semibold' : ''
-                      }`}
-                      style={
-                        dietaryFilter === option.value
-                          ? { backgroundColor: currentRestaurant.secondary_color }
-                          : {}
-                      }
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span>{option.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
-
-      <div className="mb-8 overflow-x-auto scrollbar-hide">
-        <div className="flex gap-4 min-w-max justify-center px-4">
-          {menuCategories.map(category => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`flex items-center gap-3 px-6 py-3 rounded-full font-semibold transition-all duration-300 whitespace-nowrap ${
-                activeCategory === category.id
-                  ? 'shadow-lg scale-105'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              style={
-                activeCategory === category.id
-                  ? {
-                      backgroundColor: currentRestaurant.primary_color,
-                      color: currentRestaurant.secondary_color,
-                    }
-                  : {}
-              }
-            >
-              {category.image_url && (
-                <img
-                  src={category.image_url}
-                  alt={category.name}
-                  className="w-6 h-6 rounded-full object-cover"
-                />
-              )}
-              {category.name}
-            </button>
-          ))}
         </div>
       </div>
 

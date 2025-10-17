@@ -89,8 +89,10 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection, onNavigat
   return (
     <>
       <nav
-        className="sticky top-0 z-30 shadow-md backdrop-blur-lg"
-        style={{ backgroundColor: currentRestaurant.primary_color + 'F5' }}
+        className="sticky top-0 z-30 shadow-lg backdrop-blur-md"
+        style={{
+          background: `linear-gradient(to right, ${currentRestaurant.primary_color}, ${currentRestaurant.accent_color})`
+        }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
@@ -208,7 +210,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection, onNavigat
               ) : (
                 <button
                   onClick={() => setAuthModalOpen(true)}
-                  className="px-4 py-2 bg-white text-gray-900 rounded-full font-semibold hover:shadow-lg transition-all"
+                  className="px-4 py-2 bg-white rounded-full font-semibold hover:shadow-lg transition-all"
                   style={{ color: currentRestaurant.primary_color }}
                 >
                   Sign In
@@ -229,7 +231,9 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection, onNavigat
       {mobileMenuOpen && (
         <div
           className="md:hidden fixed inset-0 z-20 pt-20"
-          style={{ backgroundColor: currentRestaurant.primary_color + 'F5' }}
+          style={{
+            background: `linear-gradient(to bottom, ${currentRestaurant.primary_color}, ${currentRestaurant.accent_color})`
+          }}
           onClick={() => setMobileMenuOpen(false)}
         >
           <div className="px-4 py-6 space-y-2">

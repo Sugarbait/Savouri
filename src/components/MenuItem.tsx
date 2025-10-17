@@ -63,6 +63,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item }) => {
       customizations: selectedCustomizations,
       image_url: item.image_url,
     });
+
+    // Notify chatbot about the item added to cart
+    addItemToChatbot(item.id, item.name, quantity);
+
     setShowDetails(false);
     setQuantity(1);
     setSelectedCustomizations([]);

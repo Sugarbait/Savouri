@@ -108,14 +108,14 @@ export const RestaurantBrowser: React.FC<RestaurantBrowserProps> = ({ onSelectRe
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
       {/* Navigation Bar */}
-      <nav className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-gray-100">
+      <nav className="bg-gradient-to-r from-orange-500 via-orange-400 to-amber-500 backdrop-blur-md shadow-lg sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-2 rounded-xl shadow-lg">
+              <div className="bg-white/20 backdrop-blur-sm p-2 rounded-xl shadow-lg">
                 <UtensilsCrossed className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
-              <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
+              <span className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">
                 Savouri
               </span>
             </div>
@@ -125,14 +125,14 @@ export const RestaurantBrowser: React.FC<RestaurantBrowserProps> = ({ onSelectRe
                 <>
                   <button
                     onClick={onAddRestaurant}
-                    className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-orange-600 transition-colors"
+                    className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white hover:text-white/80 transition-colors"
                   >
                     For Businesses
                   </button>
                   <div className="relative" ref={userMenuRef}>
                     <button
                       onClick={() => setUserMenuOpen(!userMenuOpen)}
-                      className="flex items-center gap-3 px-4 py-2 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
+                      className="flex items-center gap-3 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border border-white/30"
                     >
                       {profile?.profile_picture_url ? (
                         <img
@@ -146,8 +146,8 @@ export const RestaurantBrowser: React.FC<RestaurantBrowserProps> = ({ onSelectRe
                         </div>
                       )}
                       <div className="text-left hidden md:block">
-                        <p className="font-semibold text-gray-900 text-sm">{profile?.display_name}</p>
-                        <p className="text-xs text-gray-500">{profile?.email}</p>
+                        <p className="font-semibold text-white text-sm drop-shadow-md">{profile?.display_name}</p>
+                        <p className="text-xs text-white/80 drop-shadow-sm">{profile?.email}</p>
                       </div>
                     </button>
 
@@ -198,19 +198,19 @@ export const RestaurantBrowser: React.FC<RestaurantBrowserProps> = ({ onSelectRe
                 <>
                   <button
                     onClick={() => handleOpenAuth('signup', 'business_owner')}
-                    className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-orange-600 transition-colors"
+                    className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white hover:text-white/80 transition-colors"
                   >
                     For Businesses
                   </button>
                   <button
                     onClick={() => handleOpenAuth('signin')}
-                    className="px-3 sm:px-6 py-2 text-sm sm:text-base text-gray-700 font-semibold hover:text-orange-500 transition-colors"
+                    className="px-3 sm:px-6 py-2 text-sm sm:text-base text-white font-semibold hover:text-white/80 transition-colors"
                   >
                     Sign In
                   </button>
                   <button
                     onClick={() => handleOpenAuth('signup', 'customer')}
-                    className="px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base bg-white text-orange-600 rounded-full font-bold hover:bg-white/90 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
                     Get Started
                   </button>
@@ -229,18 +229,23 @@ export const RestaurantBrowser: React.FC<RestaurantBrowserProps> = ({ onSelectRe
               Welcome to Savouri
             </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-6">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
             Discover amazing restaurants, order your favorite meals with AI-powered assistance, and reserve tables effortlessly
           </p>
-          {user && (
-            <button
-              onClick={onAddRestaurant}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-full font-semibold hover:bg-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
-            >
-              <Plus className="w-5 h-5" />
-              Add Your Restaurant
-            </button>
-          )}
+
+          <button
+            onClick={() => {
+              if (user) {
+                onAddRestaurant();
+              } else {
+                handleOpenAuth('signup', 'business_owner');
+              }
+            }}
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-full font-bold text-lg hover:from-orange-700 hover:to-orange-600 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105"
+          >
+            <Plus className="w-6 h-6" />
+            Add Your Restaurant
+          </button>
         </div>
 
         <div className="mb-8 space-y-4">

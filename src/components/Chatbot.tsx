@@ -4,7 +4,7 @@ import { useCart } from '../contexts/CartContext';
 import { useChatbot } from '../contexts/ChatbotContext';
 import { useAuth } from '../contexts/AuthContext';
 import { ChatMessage } from '../types';
-import { MessageSquare, Send, X, ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
+import { MessageSquare, Send, X, ShoppingCart, Plus, Minus, Trash2, Star } from 'lucide-react';
 import { AuthModal } from './AuthModal';
 
 export const Chatbot: React.FC = () => {
@@ -117,8 +117,54 @@ export const Chatbot: React.FC = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const userQuery = inputValue;
     setInputValue('');
     setIsTyping(true);
+
+    // DIRECT CLIENT-SIDE FILTERING - Just like the "Show Popular Dishes" button!
+    const queryLower = userQuery.toLowerCase();
+    let directFilteredItems: typeof menuItems | null = null;
+    let directContent = '';
+
+    // Check for menu item queries and filter directly
+    if (/\b(vegan|vegetarian)\b/i.test(queryLower)) {
+      directFilteredItems = menuItems.filter(item =>
+        item.is_available && item.dietary_tags.some(tag => /vegan|vegetarian/i.test(tag))
+      ).slice(0, 12);
+      directContent = "Here are our vegan and vegetarian options:";
+    } else if (/\bgluten[- ]?free\b/i.test(queryLower)) {
+      directFilteredItems = menuItems.filter(item =>
+        item.is_available && item.dietary_tags.some(tag => /gluten/i.test(tag))
+      ).slice(0, 12);
+      directContent = "Here are our gluten-free options:";
+    } else if (/\b(no fish|without fish|no seafood)\b/i.test(queryLower)) {
+      directFilteredItems = menuItems.filter(item =>
+        item.is_available && !/fish|salmon|tuna|shrimp|crab|lobster|seafood|sashimi|nigiri|eel/i.test(item.name + ' ' + item.description)
+      ).slice(0, 12);
+      directContent = "Here are our dishes without fish:";
+    } else if (/\b(fish|seafood|salmon|tuna)\b/i.test(queryLower)) {
+      directFilteredItems = menuItems.filter(item =>
+        item.is_available && /fish|salmon|tuna|shrimp|crab|lobster|seafood|sashimi|nigiri|eel/i.test(item.name + ' ' + item.description)
+      ).slice(0, 12);
+      directContent = "Here are our fish options:";
+    } else if (/\b(popular|best|recommend|featured|top)\b/i.test(queryLower)) {
+      directFilteredItems = menuItems.filter(item => item.is_featured).slice(0, 12);
+      directContent = "Here are our most popular dishes:";
+    }
+
+    // If we have direct filtered items, show them immediately and skip AI
+    if (directFilteredItems && directFilteredItems.length > 0) {
+      setIsTyping(false);
+      const directMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: directContent,
+        timestamp: new Date(),
+        menu_items: directFilteredItems,
+      };
+      setMessages(prev => [...prev, directMessage]);
+      return;
+    }
 
     try {
       // Get menu items with category names
@@ -169,11 +215,133 @@ export const Chatbot: React.FC = () => {
 
       const data = await response.json();
 
+      // Parse the response to extract SHOW: lines and convert to visual cards
+      const lines = data.message.split('\n');
+      const showItems: string[] = [];
+      const cleanedLines: string[] = [];
+
+      for (const line of lines) {
+        if (line.trim().startsWith('SHOW:')) {
+          const itemName = line.trim().substring(5).trim();
+          showItems.push(itemName);
+        } else {
+          cleanedLines.push(line);
+        }
+      }
+
+      let content = cleanedLines.join('\n').trim();
+      let itemsToShow = showItems
+        .map(name => menuItems.find(item => item.name.toLowerCase() === name.toLowerCase()))
+        .filter((item): item is typeof menuItems[0] => item !== undefined);
+
+      // If no SHOW: items found, ALWAYS try to detect menu item names in the response
+      if (itemsToShow.length === 0) {
+        // Try to find menu item names mentioned in the response
+        let detectedItems: typeof menuItems = [];
+
+        for (const item of menuItems) {
+          // Check if item name appears in the response (with word boundaries)
+          const nameRegex = new RegExp(`\\b${item.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+          if (nameRegex.test(content)) {
+            detectedItems.push(item);
+          }
+        }
+
+        // If still no items detected, use intelligent filtering based on the user's query
+        if (detectedItems.length === 0) {
+          const userQuery = inputValue.toLowerCase();
+
+          // Check if user is asking about menu items - expanded keywords
+          const isMenuQuery = /\b(show|what|items|dishes|menu|food|have|options|recommend|best|popular|good|vegetarian|vegan|fish|meat|gluten|dairy|spicy|without|no|want|get|order)\b/i.test(userQuery);
+
+          if (isMenuQuery) {
+            // Filter items based on common query patterns
+            let filteredItems = menuItems.filter(item => item.is_available);
+
+            // Dietary/ingredient filters
+            if (/\b(vegan|vegetarian)\b/i.test(userQuery)) {
+              filteredItems = filteredItems.filter(item =>
+                item.dietary_tags.some(tag => /vegan|vegetarian/i.test(tag))
+              );
+            } else if (/\bgluten[- ]?free\b/i.test(userQuery)) {
+              filteredItems = filteredItems.filter(item =>
+                item.dietary_tags.some(tag => /gluten/i.test(tag))
+              );
+            } else if (/\b(no fish|without fish|no seafood)\b/i.test(userQuery)) {
+              // Items without fish - check description and name
+              filteredItems = filteredItems.filter(item =>
+                !/fish|salmon|tuna|shrimp|crab|lobster|seafood|sashimi|nigiri|eel/i.test(item.name + ' ' + item.description)
+              );
+            } else if (/\b(fish|seafood|salmon|tuna)\b/i.test(userQuery)) {
+              // Items with fish
+              filteredItems = filteredItems.filter(item =>
+                /fish|salmon|tuna|shrimp|crab|lobster|seafood|sashimi|nigiri|eel/i.test(item.name + ' ' + item.description)
+              );
+            } else if (/\b(popular|best|recommend|featured|top)\b/i.test(userQuery)) {
+              filteredItems = filteredItems.filter(item => item.is_featured);
+            }
+
+            // ALWAYS add filtered items if we have any - limit to 12 for display
+            if (filteredItems.length > 0) {
+              detectedItems = filteredItems.slice(0, 12);
+            } else if (/\b(popular|best|recommend|featured|top)\b/i.test(userQuery)) {
+              // Fallback to featured items if query is for recommendations
+              detectedItems = menuItems.filter(item => item.is_featured).slice(0, 6);
+            }
+          }
+        }
+
+        // If we found items, ALWAYS show them as cards and clean up the content
+        if (detectedItems.length > 0) {
+          itemsToShow = detectedItems;
+
+          // Remove ALL lines that mention menu items or have detailed descriptions
+          const lines = content.split('\n');
+          const simplifiedLines = lines.filter(line => {
+            const trimmedLine = line.trim();
+
+            // Skip empty lines
+            if (!trimmedLine) return false;
+
+            // Remove lines with prices
+            if (/\$\d+/.test(trimmedLine)) return false;
+
+            // Remove lines with numbers at start (like "1. Item Name")
+            if (/^\d+\./.test(trimmedLine)) return false;
+
+            // Remove lines that contain any detected menu item names
+            for (const item of detectedItems) {
+              const nameRegex = new RegExp(`\\b${item.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+              if (nameRegex.test(trimmedLine)) return false;
+            }
+
+            // Keep short intro/outro lines (under 150 chars)
+            if (trimmedLine.length < 150) return true;
+
+            return false;
+          });
+
+          content = simplifiedLines.join('\n').trim();
+
+          // If there's no intro text left, extract just the first sentence
+          if (!content || content.length < 10) {
+            const firstSentence = data.message.split(/[.!?]/)[0];
+            content = firstSentence && firstSentence.length > 10 && firstSentence.length < 200
+              ? firstSentence + ':'
+              : "Here are the dishes that match your request:";
+          } else if (!content.endsWith(':')) {
+            // Add a colon at the end if not present
+            content = content.replace(/[,.]$/, '') + ':';
+          }
+        }
+      }
+
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.message,
+        content,
         timestamp: new Date(),
+        menu_items: itemsToShow.length > 0 ? itemsToShow : undefined,
       };
 
       setMessages(prev => [...prev, assistantMessage]);
@@ -807,12 +975,29 @@ export const Chatbot: React.FC = () => {
                             <div className="flex-1 min-w-0">
                               <h4 className="font-semibold text-sm text-gray-900 mb-0.5">{item.name}</h4>
                               <p className="text-xs text-gray-600 line-clamp-2 mb-1">{item.description}</p>
-                              <p
-                                className="text-base font-bold"
-                                style={{ color: currentRestaurant.accent_color }}
-                              >
-                                ${item.price.toFixed(2)}
-                              </p>
+                              <div className="flex items-center gap-2">
+                                <p
+                                  className="text-base font-bold"
+                                  style={{ color: currentRestaurant.accent_color }}
+                                >
+                                  ${item.price.toFixed(2)}
+                                </p>
+                                {item.average_rating && item.average_rating > 0 ? (
+                                  <div className="flex items-center gap-1">
+                                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                                    <span className="text-xs font-semibold text-gray-700">
+                                      {item.average_rating.toFixed(1)}
+                                    </span>
+                                    {item.review_count && item.review_count > 0 && (
+                                      <span className="text-xs text-gray-500">
+                                        ({item.review_count})
+                                      </span>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <span className="text-xs text-gray-400">No reviews</span>
+                                )}
+                              </div>
                             </div>
                           </div>
                           <div className="flex items-center justify-center gap-2">
