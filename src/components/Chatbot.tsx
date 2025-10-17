@@ -129,10 +129,11 @@ export const Chatbot: React.FC = () => {
     // CRITICAL: Check for allergy-related queries FIRST
     if (/\b(allerg(y|ies|ic)|peanut|nut|shellfish|dairy|egg|soy|wheat|gluten|sesame|fish)\b/i.test(queryLower)) {
       setIsTyping(false);
+      const phoneNumber = currentRestaurant.phone || 'the restaurant';
       const allergyWarning: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `⚠️ IMPORTANT ALLERGY NOTICE\n\nI understand you have allergy concerns. For your safety, I **strongly recommend** speaking directly with our restaurant staff about:\n\n• Specific allergen information\n• Cross-contamination risks\n• Ingredient details\n• Kitchen preparation methods\n\nWhile I can show you our menu items, **I cannot guarantee** any dish is completely safe for severe allergies. Please inform your server about your allergies when ordering so we can take proper precautions.\n\nWould you like to see our menu while you discuss safe options with our team?`,
+        content: `⚠️ IMPORTANT ALLERGY NOTICE\n\nI understand you have allergy concerns. For your safety, please contact us directly at ${phoneNumber} to speak with our staff about:\n\n• Specific allergen information\n• Cross-contamination risks\n• Ingredient details\n• Kitchen preparation methods\n\nWhile I can show you our menu items, **I cannot guarantee** any dish is completely safe for severe allergies. Please inform your server about your allergies when ordering so we can take proper precautions.\n\nWould you like to see our menu while you discuss safe options with our team?`,
         timestamp: new Date(),
         suggested_actions: [
           { label: 'View Full Menu', action: 'show_menu', data: null },

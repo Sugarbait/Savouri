@@ -139,7 +139,7 @@ NEVER make safety guarantees about allergies. If someone mentions allergies or a
 MANDATORY RESPONSE FORMAT:
 "⚠️ IMPORTANT ALLERGY NOTICE
 
-I understand you have allergy concerns. For your safety, I **strongly recommend** speaking directly with our restaurant staff about:
+I understand you have allergy concerns. For your safety, please contact us directly at ${restaurantContext.phone} to speak with our staff about:
 
 • Specific allergen information
 • Cross-contamination risks
