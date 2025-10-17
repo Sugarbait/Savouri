@@ -52,50 +52,52 @@ export const MenuSection: React.FC = () => {
         {availableOptions.length > 0 && (
           <div className="flex flex-col items-center gap-3">
             <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Dietary Preferences</p>
-            <div className="flex flex-wrap gap-3 justify-center">
-              <button
-                onClick={() => setDietaryFilter('all')}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
-                  dietaryFilter === 'all'
-                    ? 'shadow-lg scale-105'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-                style={
-                  dietaryFilter === 'all'
-                    ? {
-                        backgroundColor: currentRestaurant.primary_color,
-                        color: currentRestaurant.secondary_color,
+            <div className="overflow-x-auto scrollbar-hide w-full">
+              <div className="flex gap-3 min-w-max justify-center px-4">
+                <button
+                  onClick={() => setDietaryFilter('all')}
+                  className={`flex items-center gap-3 px-6 py-3 rounded-full font-semibold transition-all duration-300 whitespace-nowrap ${
+                    dietaryFilter === 'all'
+                      ? 'shadow-lg scale-105'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  style={
+                    dietaryFilter === 'all'
+                      ? {
+                          backgroundColor: currentRestaurant.primary_color,
+                          color: currentRestaurant.secondary_color,
+                        }
+                      : {}
+                  }
+                >
+                  All Items
+                </button>
+                {availableOptions.map(option => {
+                  const Icon = option.icon;
+                  return (
+                    <button
+                      key={option.value}
+                      onClick={() => setDietaryFilter(option.value)}
+                      className={`flex items-center gap-3 px-6 py-3 rounded-full font-semibold transition-all duration-300 whitespace-nowrap ${
+                        dietaryFilter === option.value
+                          ? 'shadow-lg scale-105'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                      style={
+                        dietaryFilter === option.value
+                          ? {
+                              backgroundColor: currentRestaurant.primary_color,
+                              color: currentRestaurant.secondary_color,
+                            }
+                          : {}
                       }
-                    : {}
-                }
-              >
-                All Items
-              </button>
-              {availableOptions.map(option => {
-                const Icon = option.icon;
-                return (
-                  <button
-                    key={option.value}
-                    onClick={() => setDietaryFilter(option.value)}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
-                      dietaryFilter === option.value
-                        ? 'shadow-lg scale-105'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                    style={
-                      dietaryFilter === option.value
-                        ? {
-                            backgroundColor: currentRestaurant.primary_color,
-                            color: currentRestaurant.secondary_color,
-                          }
-                        : {}
-                    }
-                  >
-                    <Icon className="w-5 h-5" />
-                    {option.label}
-                  </button>
-                );
-              })}
+                    >
+                      <Icon className="w-5 h-5" />
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}
