@@ -1,8 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git commit -m \"$(cat <<''EOF''\nAdd restaurant phone number to allergy safety warnings\n\nEnhancement:\n- Allergy warnings now include the restaurant''s phone number\n- Users can call directly to discuss allergen concerns\n- More actionable than generic \"speak with staff\" message\n\nUpdated Messages:\n- Client-side detection shows: \"please contact us directly at [phone]\"\n- Server-side AI prompt includes: $restaurantContext.phone\n- Falls back to \"the restaurant\" if phone not available\n\nThis makes the allergy warning more helpful by providing immediate contact info.\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git commit:*)"
+      "Bash(npm run dev:*)",
+      "Bash(npm install)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm install:*)",
+      "Bash(node:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
