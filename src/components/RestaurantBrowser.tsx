@@ -221,15 +221,25 @@ export const RestaurantBrowser: React.FC<RestaurantBrowserProps> = ({ onSelectRe
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Hero Section */}
+      <div className="relative h-[600px] flex items-center justify-center overflow-hidden">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: 'url(https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop)',
+          }}
+        >
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
+        </div>
 
-        <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-4">
-            <span className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 bg-clip-text text-transparent">
-              Welcome to Savouri
-            </span>
+        {/* Hero Content */}
+        <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-white drop-shadow-2xl">
+            Welcome to Savouri
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+          <p className="text-xl md:text-2xl text-white/95 max-w-3xl mx-auto mb-10 drop-shadow-lg">
             Discover amazing restaurants, order your favorite meals with AI-powered assistance, and reserve tables effortlessly
           </p>
 
@@ -241,12 +251,15 @@ export const RestaurantBrowser: React.FC<RestaurantBrowserProps> = ({ onSelectRe
                 handleOpenAuth('signup', 'business_owner');
               }
             }}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-full font-bold text-lg hover:from-orange-700 hover:to-orange-600 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-full font-bold text-lg hover:from-orange-700 hover:to-orange-600 transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-105"
           >
             <Plus className="w-6 h-6" />
             Add Your Restaurant
           </button>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         <div className="mb-8 space-y-4">
           <div className="relative max-w-2xl mx-auto">
