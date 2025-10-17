@@ -233,6 +233,9 @@ export const Chatbot: React.FC = () => {
 
       const data = await response.json();
 
+      // CRITICAL: Check if this is an allergy warning response - DO NOT auto-show items
+      const isAllergyResponse = /⚠️.*ALLERGY|allergy concerns|For your safety.*contact/i.test(data.message);
+
       // Parse the response to extract SHOW: lines and convert to visual cards
       const lines = data.message.split('\n');
       const showItems: string[] = [];
@@ -253,7 +256,8 @@ export const Chatbot: React.FC = () => {
         .filter((item): item is typeof menuItems[0] => item !== undefined);
 
       // If no SHOW: items found, ALWAYS try to detect menu item names in the response
-      if (itemsToShow.length === 0) {
+      // UNLESS this is an allergy warning response
+      if (itemsToShow.length === 0 && !isAllergyResponse) {
         // Try to find menu item names mentioned in the response
         let detectedItems: typeof menuItems = [];
 
