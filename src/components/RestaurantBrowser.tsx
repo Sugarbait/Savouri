@@ -222,7 +222,7 @@ export const RestaurantBrowser: React.FC<RestaurantBrowserProps> = ({ onSelectRe
       </nav>
 
       {/* Hero Section */}
-      <div className="relative h-[600px] flex items-center justify-center overflow-hidden">
+      <div className="relative h-[500px] sm:h-[600px] lg:h-[650px] flex items-center justify-center overflow-hidden">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -236,10 +236,10 @@ export const RestaurantBrowser: React.FC<RestaurantBrowserProps> = ({ onSelectRe
 
         {/* Hero Content */}
         <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-white drop-shadow-2xl">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 sm:mb-6 text-white drop-shadow-2xl leading-tight">
             Welcome to Savouri
           </h1>
-          <p className="text-xl md:text-2xl text-white/95 max-w-3xl mx-auto mb-10 drop-shadow-lg">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/95 max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-10 drop-shadow-lg px-2">
             Discover amazing restaurants, order your favorite meals with AI-powered assistance, and reserve tables effortlessly
           </p>
 
@@ -251,10 +251,10 @@ export const RestaurantBrowser: React.FC<RestaurantBrowserProps> = ({ onSelectRe
                 handleOpenAuth('signup', 'business_owner');
               }
             }}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-full font-bold text-lg hover:from-orange-700 hover:to-orange-600 transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-105"
+            className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-full font-bold text-base sm:text-lg hover:from-orange-700 hover:to-orange-600 transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-105"
           >
-            <Plus className="w-6 h-6" />
-            Add Your Restaurant
+            <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
+            <span>Add Your Restaurant</span>
           </button>
         </div>
       </div>
