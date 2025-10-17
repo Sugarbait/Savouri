@@ -223,7 +223,7 @@ export const RestaurantBrowser: React.FC<RestaurantBrowserProps> = ({ onSelectRe
 
       {/* Hero Section */}
       <div className="relative h-[500px] sm:h-[600px] lg:h-[650px] flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
+        {/* Background Image - Replace with video by uncommenting video section below */}
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -233,6 +233,25 @@ export const RestaurantBrowser: React.FC<RestaurantBrowserProps> = ({ onSelectRe
           {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
         </div>
+
+        {/*
+        To add your own video:
+        1. Place your restaurant video file in /public/videos/hero-background.mp4
+        2. Uncomment the video section below
+        3. Comment out or remove the Background Image div above
+
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          poster="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop"
+        >
+          <source src="/videos/hero-background.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70 z-10"></div>
+        */}
 
         {/* Hero Content */}
         <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
