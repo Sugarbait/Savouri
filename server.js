@@ -146,7 +146,7 @@ I understand you have allergy concerns. For your safety, please contact us direc
 • Ingredient details
 • Kitchen preparation methods
 
-While I can show you our menu items, **I cannot guarantee** any dish is completely safe for severe allergies. Please inform your server about your allergies when ordering so we can take proper precautions.
+While I can show you our menu items, **I cannot guarantee** any dish is completely safe for severe allergies. We recommend calling us before placing your order so our team can guide you on safe options and ensure proper kitchen precautions.
 
 Would you like to see our menu while you discuss safe options with our team?"
 
